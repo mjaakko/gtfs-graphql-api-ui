@@ -26,7 +26,8 @@ const useStopScheduleRows = (stopId: string, maxRows: number) => {
         variables: {
             stopId: stopId,
             maxRows: maxRows
-        }
+        },
+        fetchPolicy: "no-cache" 
     })
 }
 
