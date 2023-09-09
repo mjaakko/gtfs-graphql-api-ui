@@ -9,6 +9,7 @@ const STOPS_QUERY = gql(`
         name
         latitude
         longitude
+        timezone
     }
   }
 `);

@@ -13,6 +13,7 @@ const VEHICLE_POSITIONS_SUBSCRIPTION = gql(`
             headsign
             stop {
                 name
+                timezone
             }
         }
         trip {
