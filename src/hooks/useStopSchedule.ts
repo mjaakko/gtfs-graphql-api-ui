@@ -10,6 +10,11 @@ const STOP_SCHEDULE_ROWS_QUERY = gql(`
                     tripId
                     date
                     headsign
+                    route {
+                        agency {
+                            timezone
+                        }
+                    }
                 }
                 headsign
                 arrivalTimeScheduled

@@ -21,6 +21,9 @@ const VEHICLE_POSITIONS_SUBSCRIPTION = gql(`
             date
             route {
                 longName
+                agency {
+                    timezone
+                }
             }
             headsign
         }
