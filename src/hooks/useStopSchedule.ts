@@ -5,7 +5,7 @@ import { gql } from "../__generated__";
 const STOP_SCHEDULE_ROWS_QUERY = gql(`
     query StopScheduleRows($stopId: String!, $maxRows: Int!) {
         stop(id: $stopId) {
-            scheduleRows(max: $maxRows) {
+            scheduleRows(max: $maxRows, includeLastStop: false) {
                 trip {
                     tripId
                     date
