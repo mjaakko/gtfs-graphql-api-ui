@@ -8,8 +8,9 @@ const RelativeTime = (props: { timestamp: Dayjs }) => {
 
         return () => clearInterval(intervalId)
     }, [])
+    useEffect(() => setCurrentTime(dayjs), [props.timestamp])
 
-    return props.timestamp.to(currentTime)
+    return currentTime.to(props.timestamp)
 }
 
 export default RelativeTime
