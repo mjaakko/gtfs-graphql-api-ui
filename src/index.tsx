@@ -1,20 +1,44 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+
+import L from 'leaflet';
+
 import { ApolloClient, InMemoryCache, ApolloProvider, split, HttpLink } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+
+import 'leaflet/dist/leaflet.css';
+import './index.css';
+
+//Fix Leaflet default icon not being visible
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
+
+//Setup Day.js with support for timezones, local formatting and relative time
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(localizedFormat)
+dayjs.extend(relativeTime)
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:8081/graphql'
+  uri: process.env.REACT_APP_HTTP_GRAPHQL_URL
 })
 
 const wsLink = new GraphQLWsLink(createClient({
-  url: 'ws://localhost:8081/graphql',
+  url: process.env.REACT_APP_WS_GRAPHQL_URL as string,
 }))
 
 
