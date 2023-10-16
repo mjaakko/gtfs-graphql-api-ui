@@ -14,6 +14,8 @@ import timezone from 'dayjs/plugin/timezone';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
+import { env } from './env';
+
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -34,11 +36,11 @@ dayjs.extend(localizedFormat)
 dayjs.extend(relativeTime)
 
 const httpLink = new HttpLink({
-  uri: process.env.REACT_APP_HTTP_GRAPHQL_URL
+  uri: env.REACT_APP_HTTP_GRAPHQL_URL
 })
 
 const wsLink = new GraphQLWsLink(createClient({
-  url: process.env.REACT_APP_WS_GRAPHQL_URL as string,
+  url: env.REACT_APP_WS_GRAPHQL_URL as string,
 }))
 
 

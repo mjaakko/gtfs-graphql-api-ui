@@ -59,6 +59,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/client-preset": "^4.1.0",
-    "@types/mapbox__polyline": "^1.0.2"
+    "@types/mapbox__polyline": "^1.0.2",
+    "react-inject-env": "^2.1.0"
   }
 }
