@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+
 import L from 'leaflet';
 
 import { ApolloClient, InMemoryCache, ApolloProvider, split, HttpLink } from '@apollo/client';
@@ -21,6 +23,8 @@ import reportWebVitals from './reportWebVitals';
 
 import 'leaflet/dist/leaflet.css';
 import './index.css';
+
+import Trip from './pages/Trip';
 
 //Fix Leaflet default icon not being visible
 L.Icon.Default.mergeOptions({
@@ -60,13 +64,20 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+  },
+]);
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <RouterProvider router={router} />
     </ApolloProvider>
   </React.StrictMode>
 );

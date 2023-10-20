@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { MapContainer, TileLayer, useMap, useMapEvent } from "react-leaflet"
-import { LatLngBounds, LatLngTuple } from "leaflet"
+import { LatLngBounds, LatLngTuple, Map as LeafletMap } from "leaflet"
 
 import useStops from "../hooks/useStops"
 import useVehiclePositions from "../hooks/useVehiclePositions"
@@ -46,12 +46,13 @@ const Stops = () => {
   )
 }
 
-const Map = () => {
+const Map = React.forwardRef((_, ref: React.Ref<LeafletMap>) => {
   return (
     <MapContainer
         center={[59.711, 21.747]}
         zoom={8}
-        style={{ height: '100%', width: '100%' }}>
+        style={{ height: '100%', flexGrow: '1' }}
+        ref={ref}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -60,6 +61,6 @@ const Map = () => {
         <Vehicles />
     </MapContainer>
   )
-}
+})
 
 export default Map

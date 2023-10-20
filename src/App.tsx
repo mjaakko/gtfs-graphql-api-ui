@@ -1,4 +1,9 @@
-import React, { useState, ReactElement } from 'react';
+import React, { useState, ReactElement, useRef, useEffect } from 'react';
+
+import { Outlet, useOutlet } from 'react-router-dom';
+
+import { Map as LeafletMap } from "leaflet"
+
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -42,6 +47,16 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const toggleDrawer = () => setDrawerOpen((state: boolean) => !state)
+
+  const mapRef = useRef<LeafletMap>(null)
+
+  const outlet = useOutlet()
+
+  useEffect(
+    () => {
+      mapRef.current?.invalidateSize()
+    },
+    [outlet, mapRef.current])
 
   const drawer = (
     <Box onClick={toggleDrawer} sx={{ textAlign: 'center' }}>
@@ -115,8 +130,13 @@ function App() {
       </Box>
       <Box component="main" sx={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
         <Offset />
-        <Box sx={{ flexGrow: 1 }}>
-          <Map />
+        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row' }}>
+          <Map ref={mapRef} />
+          { outlet &&
+            <Box sx={{ width: 500, p: 2, boxShadow: 1, zIndex: 1 }}>
+              <Outlet />
+            </Box>
+          }
         </Box>
       </Box>
     </Box>
