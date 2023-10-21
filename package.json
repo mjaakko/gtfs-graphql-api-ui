@@ -9,6 +9,7 @@
     "@fontsource/roboto": "^5.0.5",
     "@mapbox/polyline": "^1.2.0",
     "@mui/icons-material": "^5.14.0",
+    "@mui/lab": "^5.0.0-alpha.149",
     "@mui/material": "^5.14.0",
     "@mui/styles": "^5.14.0",
     "@testing-library/jest-dom": "^5.14.1",
