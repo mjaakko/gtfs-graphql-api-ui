@@ -1,16 +1,17 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef } from "react"
 
 import { Marker, Popup } from "react-leaflet"
-import { DivIcon } from "leaflet"
+import { DivIcon, Marker as LeafletMarker } from "leaflet"
 
 import dayjs from "dayjs"
 
-import { formatTime } from "../utils/timeFormat"
 import TripPolyline from "./TripPolyline"
 
 import shipIcon from "../images/ship_icon.png"
 import { VehiclePosition } from "../__generated__/graphql"
 import RelativeTime from "./RelativeTime"
+import { useMatch, useNavigate } from "react-router-dom"
+import { Typography } from "@mui/material"
 
 const getIconRotation = (shipDirection: number) => Math.round((shipDirection - 180) % 360)
 
@@ -23,53 +24,55 @@ const createIcon = (shipDirection: number) => {
 }
 
 const VehicleMarker = (props: { vehiclePosition: VehiclePosition }) => {
-  const [showPolyline, setShowPolyline] = useState(false)
-
   const vehiclePosition = props.vehiclePosition
+
+  const navigate = useNavigate()
+
+  const markerRef = useRef<LeafletMarker>(null)
+
+  const pathMatch = useMatch("/trips/:tripId/:tripDate")
+
+  const markerOpen = pathMatch?.params.tripId === vehiclePosition.trip.tripId && pathMatch.params.tripDate === vehiclePosition.trip.date
+
+  useEffect(() => {
+    if (markerRef.current && !markerRef.current.isPopupOpen() && markerOpen) {
+      markerRef.current.openPopup()
+    }
+  }, [markerOpen])
 
   if (!vehiclePosition.currentStop) {
     return null
   }
 
-  const destination = vehiclePosition.currentStop.headsign ?
-    vehiclePosition.currentStop.headsign :
-    vehiclePosition.trip.headsign
-
-  const atStop = vehiclePosition.status === "STOPPED_AT"
-
-  const stopTimezone = vehiclePosition.currentStop.stop.timezone || vehiclePosition.trip.route.agency?.timezone || "Europe/Helsinki"
-
-  const stopStatus = atStop ?
-    <>
-      Stopped at <i>{vehiclePosition.currentStop.stop.name}</i>, scheduled departure: <i>{formatTime(vehiclePosition.currentStop.departureTimeScheduled, stopTimezone)}</i>
-    </> :
-    <>
-      In transit to <i>{vehiclePosition.currentStop.stop.name}</i>, scheduled arrival: <i>{formatTime(vehiclePosition.currentStop.arrivalTimeScheduled, stopTimezone)}</i>
-    </>
-
   return <>
-    { showPolyline && <TripPolyline tripId={vehiclePosition.trip.tripId} date={vehiclePosition.trip.date} /> }
+    { markerOpen && <TripPolyline tripId={vehiclePosition.trip.tripId} date={vehiclePosition.trip.date} /> }
     <Marker
       position={[vehiclePosition.latitude, vehiclePosition.longitude]}
       icon={createIcon(vehiclePosition.bearing || 0.0)}
       eventHandlers={{
-        popupclose: () => setShowPolyline(false),
-        popupopen: () => setShowPolyline(true)
-      }}>
-      <Popup keepInView={false} autoPan={false}>
-          <b>{ vehiclePosition.vehicleLabel || vehiclePosition.vehicleId }</b>
+        popupclose: () => {
+          //If marker ref is null, the map hasn't loaded yet and we should ignore this event, because we don't want to close the popup which was opened programmatcally 
+          if (markerRef.current) {
+            navigate("/")
+          }
+        },
+        popupopen: () => {
+          if (!markerOpen) {
+            navigate(`/trips/${vehiclePosition.trip.tripId}/${vehiclePosition.trip.date}`)
+          }
+        }
+      }}
+      ref={markerRef}>
+      <Popup keepInView={false} autoPan={false} minWidth={170}>
+          <Typography variant="subtitle2" component="span">{ vehiclePosition.vehicleLabel || vehiclePosition.vehicleId }</Typography>
           <br />
+          <Typography variant="caption" component="span">
+            Speed: <i>{ ((vehiclePosition.speed || 0.0) * 3.6).toFixed(1) + " km/h" }</i>
+          </Typography>
           <br />
-          Destination: <i>{ destination }</i>
-          <br />
-          <br />
-          { stopStatus }
-          <br />
-          <br />
-          Speed: <i>{ ((vehiclePosition.speed || 0.0) * 3.6).toFixed(1) + " km/h" }</i>
-          <br />
-          <br />
-          Updated: <i>{ vehiclePosition.timestamp && <RelativeTime timestamp={dayjs(vehiclePosition.timestamp)} /> }</i>
+          <Typography variant="caption" component="span">
+            Updated: <i>{ vehiclePosition.timestamp && <RelativeTime timestamp={dayjs(vehiclePosition.timestamp)} /> }</i>
+          </Typography>
       </Popup>
     </Marker>
   </>
