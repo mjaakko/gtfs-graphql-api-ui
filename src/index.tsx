@@ -68,6 +68,12 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    children: [
+      {
+        path: "trips/:tripId/:tripDate",
+        element: <Trip />
+      }
+    ]
   },
 ]);
 
