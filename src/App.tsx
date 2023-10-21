@@ -15,19 +15,13 @@ import Button from '@mui/material/Button';
 import InfoIcon from '@mui/icons-material/Info';
 import { styled } from "@mui/material/styles";
 
-import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Theme, useMediaQuery, useTheme } from '@mui/material';
 
 
 import './App.css';
 import Map from './components/Map';
 
-const Offset = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar
-}));
+const Offset = styled("div")(({ theme }) => theme.mixins.toolbar)
 
 interface NavItem {
   title: string,
@@ -130,13 +124,15 @@ function App() {
       </Box>
       <Box component="main" sx={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
         <Offset />
-        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row' }}>
-          <Map ref={mapRef} />
-          { outlet &&
-            <Box sx={{ width: 500, p: 2, boxShadow: 1, zIndex: 1 }}>
-              <Outlet />
-            </Box>
-          }
+        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}>
+            <Map ref={mapRef} />
+            { outlet &&
+              <Box sx={{ maxHeight: '100%', height: '100%', flexBasis: 400, p: 2, boxShadow: 1, zIndex: 1, overflow: 'scroll' }}>
+                <Outlet />
+              </Box>
+            }
+          </Box>
         </Box>
       </Box>
     </Box>
