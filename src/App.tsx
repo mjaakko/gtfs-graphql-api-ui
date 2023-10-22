@@ -1,4 +1,4 @@
-import React, { useState, ReactElement, useRef, useEffect } from 'react';
+import React, { useState, ReactElement, useRef, useEffect, ReactNode } from 'react';
 
 import { Outlet, useOutlet } from 'react-router-dom';
 
@@ -15,11 +15,16 @@ import Button from '@mui/material/Button';
 import InfoIcon from '@mui/icons-material/Info';
 import { styled } from "@mui/material/styles";
 
-import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Theme, useMediaQuery, useTheme } from '@mui/material';
+import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 
 import './App.css';
 import Map from './components/Map';
+
+import useVehiclePositions from './hooks/useVehiclePositions';
+import VehiclePositionContext from './context/vehiclePositionContext';
+
+import { VehiclePosition } from './__generated__/graphql';
 
 const Offset = styled("div")(({ theme }) => theme.mixins.toolbar)
 
@@ -37,6 +42,14 @@ const navItems: NavItem[] = [
   }
 ]
 
+const VehiclePositionProvider = (props: { children: ReactNode }) => {
+  const vehiclePositions = useVehiclePositions()
+
+  return <VehiclePositionContext.Provider value={vehiclePositions.data?.vehiclePositions as VehiclePosition[] || []}>
+    { props.children }
+  </VehiclePositionContext.Provider>
+}
+
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
@@ -51,7 +64,7 @@ function App() {
       mapRef.current?.invalidateSize()
     },
     [outlet, mapRef.current])
-
+  
   const drawer = (
     <Box onClick={toggleDrawer} sx={{ textAlign: 'center' }}>
       <Typography variant="h6" sx={{ my: 2 }}>
@@ -124,16 +137,18 @@ function App() {
       </Box>
       <Box component="main" sx={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
         <Offset />
-        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}>
-            <Map ref={mapRef} />
-            { outlet &&
-              <Box sx={{ maxHeight: '100%', height: '100%', flexBasis: 400, p: 2, boxShadow: 1, zIndex: 1, overflow: 'scroll' }}>
-                <Outlet />
-              </Box>
-            }
+        <VehiclePositionProvider>
+          <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}>
+              <Map ref={mapRef} />
+              { outlet &&
+                <Box sx={{ maxHeight: '100%', height: '100%', flexBasis: 400, p: 2, boxShadow: 1, zIndex: 1, overflow: 'scroll' }}>
+                  <Outlet />
+                </Box>
+              }
+            </Box>
           </Box>
-        </Box>
+        </VehiclePositionProvider>
       </Box>
     </Box>
   )

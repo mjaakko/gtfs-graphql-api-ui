@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { MapContainer, TileLayer, useMap, useMapEvent } from "react-leaflet"
 import { LatLngBounds, LatLngTuple, Map as LeafletMap } from "leaflet"
 
 import useStops from "../hooks/useStops"
-import useVehiclePositions from "../hooks/useVehiclePositions"
 
 import { Stop, VehiclePosition } from "../__generated__/graphql"
 
 import VehicleMarker from "./VehicleMarker"
 import StopMarker from "./StopMarker"
+import VehiclePositionContext from "../context/vehiclePositionContext"
 
 const Vehicles = () => {
-  const { data } = useVehiclePositions()
+  const vehiclePositions = useContext(VehiclePositionContext)
 
-  return (data?.vehiclePositions as VehiclePosition[] || []).map((vehiclePosition: VehiclePosition) => (
+  return vehiclePositions.map((vehiclePosition: VehiclePosition) => (
     <VehicleMarker key={vehiclePosition.vehicleId} vehiclePosition={vehiclePosition} />
   ))
 }
