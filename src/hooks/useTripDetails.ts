@@ -22,6 +22,7 @@ const TRIP_DETAILS_QUERY = gql(`
               departureTimeScheduled
             }
             vehiclePosition {
+              vehicleId
               vehicleLabel
             }
         }
