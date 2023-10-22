@@ -1,13 +1,26 @@
+import { useContext } from "react"
 import { useParams } from "react-router-dom"
 
+import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineSeparator, timelineItemClasses } from "@mui/lab"
+import { deepOrange } from "@mui/material/colors"
 import { Box, CircularProgress, Typography } from "@mui/material"
+
+import { TripScheduleRow } from "../__generated__/graphql"
+
 import useTripDetails from "../hooks/useTripDetails"
 
 import { formatDateTime } from "../utils/timeFormat"
-import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineSeparator, timelineItemClasses } from "@mui/lab"
 
-const TripScheduleRows = (props: { scheduleRows: any, agencyTimezone: string }) => {
+import VehiclePositionContext from "../context/vehiclePositionContext"
+
+const TripScheduleRows = (props: { scheduleRows: TripScheduleRow[], agencyTimezone: string, vehicleId: string | null }) => {
     const agencyTimezone = props.agencyTimezone
+
+    const vehiclePositions = useContext(VehiclePositionContext)
+    const vehiclePosition = vehiclePositions.find(vehiclePosition => vehiclePosition.vehicleId === props.vehicleId)
+
+    const inTransitToSequence = vehiclePosition?.status === "IN_TRANSIT_TO" ? vehiclePosition.currentStop?.sequenceNumber : null
+    const stoppedAtSequence = vehiclePosition?.status === "STOPPED_AT" ? vehiclePosition.currentStop?.sequenceNumber : null
 
     return <Timeline
       position="right"
@@ -17,16 +30,24 @@ const TripScheduleRows = (props: { scheduleRows: any, agencyTimezone: string }) 
           padding: 0,
         },
       }}>
-        {props.scheduleRows.map((scheduleRow: any, index: number) => {
+        {props.scheduleRows.map((scheduleRow: TripScheduleRow, index: number) => {
           const stopTimezone = scheduleRow.stop.timezone
 
           const isFirst = index === 0
           const isLast = index === props.scheduleRows.length - 1
 
+          const color = deepOrange[500]
+
           return <TimelineItem key={scheduleRow.sequenceNumber}>
             <TimelineSeparator>
-              <TimelineDot />
-              { !isLast && <TimelineConnector /> }
+              { stoppedAtSequence === scheduleRow.sequenceNumber ?
+                <TimelineDot sx={{ backgroundColor: color }} /> :
+                <TimelineDot /> 
+              }
+              { !isLast && (inTransitToSequence === scheduleRow.sequenceNumber ?
+                <TimelineConnector sx={{ backgroundColor: color }} /> :
+                <TimelineConnector />)
+              }
             </TimelineSeparator>
             <TimelineContent sx={{ height: '100px', textOverflow: 'ellipsis', overflow: 'hidden' }}>
               <Typography component="div" sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
@@ -69,6 +90,8 @@ const TripDetails = (props: { tripId: string, date: string }) => {
 
   const agencyTimezone = route.agency!.timezone
 
+  const vehicleId = tripDetails.data.trip.vehiclePosition?.vehicleId || null
+
   return <>
     <Typography variant="h5" component="h2" sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden'  }}>
       { route.shortName ? route.shortName : route.longName }
@@ -78,7 +101,7 @@ const TripDetails = (props: { tripId: string, date: string }) => {
         { tripDetails.data.trip.vehiclePosition.vehicleLabel }
       </Typography>
     }
-    <TripScheduleRows scheduleRows={tripDetails.data.trip.scheduleRows} agencyTimezone={agencyTimezone} />
+    <TripScheduleRows scheduleRows={tripDetails.data.trip.scheduleRows as TripScheduleRow[]} agencyTimezone={agencyTimezone} vehicleId={vehicleId}/>
   </>
 }
 
