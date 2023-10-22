@@ -44,7 +44,7 @@ const TripScheduleRows = (props: { scheduleRows: TripScheduleRow[], agencyTimezo
                 <TimelineDot sx={{ backgroundColor: color }} /> :
                 <TimelineDot /> 
               }
-              { !isLast && (inTransitToSequence === scheduleRow.sequenceNumber ?
+              { !isLast && (inTransitToSequence === scheduleRow.sequenceNumber + 1 ?
                 <TimelineConnector sx={{ backgroundColor: color }} /> :
                 <TimelineConnector />)
               }
