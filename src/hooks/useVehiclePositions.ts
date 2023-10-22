@@ -8,6 +8,7 @@ const VEHICLE_POSITIONS_SUBSCRIPTION = gql(`
         vehicleId
         vehicleLabel
         currentStop {
+            sequenceNumber
             arrivalTimeScheduled
             departureTimeScheduled
             headsign
