@@ -19,6 +19,9 @@ import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItem
 
 
 import './App.css';
+
+import { env } from './env';
+
 import Map from './components/Map';
 
 import useVehiclePositions from './hooks/useVehiclePositions';
@@ -106,7 +109,7 @@ function App() {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            Baltic Ferries
+            { env.REACT_APP_APPLICATION_TITLE }
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             { 

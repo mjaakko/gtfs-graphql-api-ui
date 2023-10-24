@@ -1,5 +1,5 @@
 {
-  "name": "finferries-ui",
+  "name": "gtfs-graphql-api-ui",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
