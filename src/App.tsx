@@ -15,7 +15,7 @@ import Button from '@mui/material/Button';
 import InfoIcon from '@mui/icons-material/Info';
 import { styled } from "@mui/material/styles";
 
-import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, useMediaQuery, useTheme } from '@mui/material';
 
 
 import './App.css';
@@ -64,6 +64,9 @@ function App() {
       mapRef.current?.invalidateSize()
     },
     [outlet, mapRef.current])
+
+  const theme = useTheme()
+  const isAtleastMediumScreen = useMediaQuery(theme.breakpoints.up("md"))
   
   const drawer = (
     <Box onClick={toggleDrawer} sx={{ textAlign: 'center' }}>
@@ -139,10 +142,24 @@ function App() {
         <Offset />
         <VehiclePositionProvider>
           <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}>
-              <Map ref={mapRef} />
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: isAtleastMediumScreen ? 'row' : 'column' }}>
+              <Map 
+                ref={mapRef}
+                style={isAtleastMediumScreen ?
+                  { height: '100%', flexGrow: '1', minHeight: undefined } :
+                  { height: undefined, flexGrow: '0', minHeight: '300px' }
+                } />
               { outlet &&
-                <Box sx={{ maxHeight: '100%', height: '100%', flexBasis: 400, p: 2, boxShadow: 1, zIndex: 1, overflow: 'scroll' }}>
+                <Box sx={{ 
+                  maxHeight: isAtleastMediumScreen ? '100%' : undefined,
+                  height: isAtleastMediumScreen ? '100%' : undefined,
+                  flexBasis: isAtleastMediumScreen ? 400 : undefined,
+                  flexGrow: isAtleastMediumScreen ? '0' : '1',
+                  p: 2,
+                  boxShadow: 1,
+                  zIndex: 1,
+                  overflow: 'scroll'
+                  }}>
                   <Outlet />
                 </Box>
               }

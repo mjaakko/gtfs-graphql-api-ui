@@ -46,12 +46,12 @@ const Stops = () => {
   )
 }
 
-const Map = React.forwardRef((_, ref: React.Ref<LeafletMap>) => {
+const Map = React.forwardRef((props: { style: React.CSSProperties}, ref: React.Ref<LeafletMap>) => {
   return (
     <MapContainer
         center={[59.711, 21.747]}
         zoom={8}
-        style={{ height: '100%', flexGrow: '1' }}
+        style={{ ...props.style }}
         ref={ref}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
