@@ -22,4 +22,5 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
+          push: true
           tags: mjaakko/gtfs-graphql-api-ui:edge
