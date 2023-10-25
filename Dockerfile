@@ -2,7 +2,7 @@ FROM node:20-alpine AS build
 
 COPY ./ .
 
-RUN ["yarn"]
+RUN ["yarn", "--network-timeout", "600000"]
 RUN ["yarn", "build"]
 
 FROM nginx:1-alpine
