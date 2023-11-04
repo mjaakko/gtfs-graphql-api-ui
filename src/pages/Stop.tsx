@@ -10,7 +10,7 @@ import { formatTime } from "../utils/timeFormat"
 
 import useStopDetails from "../hooks/useStopDetails"
 
-const StopScheduleRows = (props: { scheduleRows: StopScheduleRow[] }) => {
+const StopScheduleRows = (props: { scheduleRows: StopScheduleRow[], stopTimezone: string | null }) => {
   const navigate = useNavigate()
 
   return <List>
@@ -18,7 +18,7 @@ const StopScheduleRows = (props: { scheduleRows: StopScheduleRow[] }) => {
       props.scheduleRows.map((scheduleRow: StopScheduleRow) => {
         const headsign = scheduleRow.headsign || scheduleRow.trip.headsign
 
-        const timezone = scheduleRow.trip.route.agency?.timezone || "Europe/Helsinki"
+        const timezone = props.stopTimezone || scheduleRow.trip.route.agency?.timezone || "Europe/Helsinki"
 
         return <ListItem key={`/${scheduleRow.trip.tripId}_${scheduleRow.trip.date}`} disablePadding>
           <ListItemButton onClick={() => navigate(`/trips/${scheduleRow.trip.tripId}/${scheduleRow.trip.date}`)}>
@@ -47,7 +47,7 @@ const StopDetails = (props: { stopId: string }) => {
     <Typography variant="h5" component="h2" sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden'  }}>
       { data.stop.name }
     </Typography>
-    <StopScheduleRows scheduleRows={data.stop.scheduleRows as StopScheduleRow[]} />
+    <StopScheduleRows scheduleRows={data.stop.scheduleRows as StopScheduleRow[]} stopTimezone={data.stop.timezone ?? null} />
   </>
 }
 
