@@ -74,7 +74,7 @@ function App() {
   const drawer = (
     <Box onClick={toggleDrawer} sx={{ textAlign: 'center' }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        Baltic Ferries
+        { env.REACT_APP_APPLICATION_TITLE }
       </Typography>
       <Divider />
       <List>
