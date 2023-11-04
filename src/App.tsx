@@ -148,16 +148,13 @@ function App() {
             <Box sx={{ height: '100%', display: 'flex', flexDirection: isAtleastMediumScreen ? 'row' : 'column' }}>
               <Map 
                 ref={mapRef}
-                style={isAtleastMediumScreen ?
-                  { height: '100%', flexGrow: '1', minHeight: undefined } :
-                  { height: undefined, flexGrow: '0', minHeight: '300px' }
-                } />
+                style={{ height: isAtleastMediumScreen ? '100%' : undefined, flexGrow: '1', minHeight: undefined }} />
               { outlet &&
                 <Box sx={{ 
                   maxHeight: isAtleastMediumScreen ? '100%' : undefined,
                   height: isAtleastMediumScreen ? '100%' : undefined,
-                  flexBasis: isAtleastMediumScreen ? 400 : undefined,
-                  flexGrow: isAtleastMediumScreen ? '0' : '1',
+                  flexBasis: 400,
+                  flexGrow: '0',
                   p: 2,
                   boxShadow: 1,
                   zIndex: 1,
