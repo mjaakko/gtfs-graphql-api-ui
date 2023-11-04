@@ -25,6 +25,7 @@ import 'leaflet/dist/leaflet.css';
 import './index.css';
 
 import Trip from './pages/Trip';
+import Stop from './pages/Stop';
 
 //Fix Leaflet default icon not being visible
 L.Icon.Default.mergeOptions({
@@ -70,8 +71,12 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "trips/:tripId/:tripDate",
+        path: "/trips/:tripId/:tripDate",
         element: <Trip />
+      },
+      {
+        path: "/stops/:stopId",
+        element: <Stop />
       }
     ]
   },
