@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineSeparator, timelineItemClasses } from "@mui/lab"
@@ -22,6 +22,27 @@ const TripScheduleRows = (props: { scheduleRows: TripScheduleRow[], agencyTimezo
     const inTransitToSequence = vehiclePosition?.status === "IN_TRANSIT_TO" ? vehiclePosition.currentStop?.sequenceNumber : null
     const stoppedAtSequence = vehiclePosition?.status === "STOPPED_AT" ? vehiclePosition.currentStop?.sequenceNumber : null
 
+    const inViewIndex = props.scheduleRows
+      .findIndex((scheduleRow: TripScheduleRow, index: number) => {
+        const nextScheduleRow = props.scheduleRows[index + 1]
+        return stoppedAtSequence === scheduleRow.sequenceNumber ||
+          (nextScheduleRow != null && inTransitToSequence === nextScheduleRow.sequenceNumber)
+      })
+
+    const ref = useRef<HTMLDivElement>()
+  
+    const [scrolled, setScrolled] = useState(false)
+
+    useEffect(() => {
+      if (!scrolled) {
+        const element = ref?.current
+        if (element) {
+          element.scrollIntoView()
+          setScrolled(true)
+        }
+      }
+    }, [scrolled, inViewIndex])
+
     return <Timeline
       position="right"
       sx={{
@@ -38,7 +59,7 @@ const TripScheduleRows = (props: { scheduleRows: TripScheduleRow[], agencyTimezo
 
           const color = deepOrange[500]
 
-          return <TimelineItem key={scheduleRow.sequenceNumber}>
+          return <TimelineItem key={scheduleRow.sequenceNumber} ref={index === inViewIndex ? ref : undefined}>
             <TimelineSeparator>
               { stoppedAtSequence === scheduleRow.sequenceNumber ?
                 <TimelineDot sx={{ backgroundColor: color }} /> :
