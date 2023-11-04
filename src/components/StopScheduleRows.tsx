@@ -4,13 +4,13 @@ import { CircularProgress } from "@mui/material"
 
 import { StopScheduleRow } from "../__generated__/graphql"
 
-import useStopScheduleRows from "../hooks/useStopSchedule"
+import useStopDetails from "../hooks/useStopDetails"
 
 import { formatTime } from "../utils/timeFormat"
 
 
 const StopScheduleRows = (props: { stopId: string, timezone?: string }) => {
-    const { loading, data } = useStopScheduleRows(props.stopId, 4)
+    const { loading, data } = useStopDetails(props.stopId, 4)
   
     if (loading) {
       return <CircularProgress sx={{ m: 2 }}/>

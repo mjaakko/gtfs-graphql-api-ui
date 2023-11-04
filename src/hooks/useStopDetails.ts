@@ -2,9 +2,11 @@ import { useQuery } from "@apollo/client"
 
 import { gql } from "../__generated__";
 
-const STOP_SCHEDULE_ROWS_QUERY = gql(`
+const STOP_DETAILS_QUERY = gql(`
     query StopScheduleRows($stopId: String!, $maxRows: Int!) {
         stop(id: $stopId) {
+            name
+            timezone
             scheduleRows(max: $maxRows, includeLastStop: false) {
                 trip {
                     tripId
@@ -26,8 +28,8 @@ const STOP_SCHEDULE_ROWS_QUERY = gql(`
     }
 `);
 
-const useStopScheduleRows = (stopId: string, maxRows: number) => {
-    return useQuery(STOP_SCHEDULE_ROWS_QUERY, {
+const useStopDetails = (stopId: string, maxRows: number) => {
+    return useQuery(STOP_DETAILS_QUERY, {
         variables: {
             stopId: stopId,
             maxRows: maxRows
@@ -36,4 +38,4 @@ const useStopScheduleRows = (stopId: string, maxRows: number) => {
     })
 }
 
-export default useStopScheduleRows
+export default useStopDetails
