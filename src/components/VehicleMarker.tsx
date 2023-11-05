@@ -52,7 +52,7 @@ const VehicleMarker = (props: { vehiclePosition: VehiclePosition }) => {
       eventHandlers={{
         popupclose: () => {
           //If marker ref is null, the map hasn't loaded yet and we should ignore this event, because we don't want to close the popup which was opened programmatcally 
-          if (markerRef.current) {
+          if (markerRef.current && markerOpen) {
             navigate("/")
           }
         },
