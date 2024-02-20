@@ -10,7 +10,10 @@ const RelativeTime = (props: { timestamp: Dayjs }) => {
     }, [])
     useEffect(() => setCurrentTime(dayjs), [props.timestamp])
 
-    return currentTime.to(props.timestamp)
+    //If given timestamp is in the future, show current time
+    return props.timestamp.isAfter(currentTime) ?
+        currentTime.to(currentTime) :
+        currentTime.to(props.timestamp)
 }
 
 export default RelativeTime
