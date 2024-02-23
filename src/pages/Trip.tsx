@@ -13,6 +13,7 @@ import useTripDetails from "../hooks/useTripDetails"
 import { formatDateTime } from "../utils/timeFormat"
 
 import VehiclePositionContext from "../context/vehiclePositionContext"
+import DocumentTitle from "../components/DocumentTitle"
 
 const TripScheduleRows = (props: { scheduleRows: TripScheduleRow[], agencyTimezone: string, vehicleId: string | null }) => {
     const agencyTimezone = props.agencyTimezone
@@ -117,10 +118,13 @@ const TripDetails = (props: { tripId: string, date: string }) => {
 
   const vehicleId = tripDetails.data.trip.vehiclePosition?.vehicleId || null
 
+  const title = (route.shortName ? route.shortName : route.longName) ?? null
+
   return <Box sx={{ display: 'flex', flexDirection: 'column', maxHeight: '100%' }}>
+    <DocumentTitle title={title} />
     <Box component="header" sx={{ flexShrink: 0, flexGrow: 0, backgroundColor: theme.palette.background.default, zIndex: 2 }}>
       <Typography variant="h5" component="h2" sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-        { route.shortName ? route.shortName : route.longName }
+        { title }
       </Typography>
       { tripDetails.data.trip.vehiclePosition?.vehicleLabel &&
         <Typography variant="caption" component="span" sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden'  }} gutterBottom>

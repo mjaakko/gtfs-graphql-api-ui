@@ -28,6 +28,7 @@ import useVehiclePositions from './hooks/useVehiclePositions';
 import VehiclePositionContext from './context/vehiclePositionContext';
 
 import { VehiclePosition } from './__generated__/graphql';
+import DocumentTitle from './components/DocumentTitle';
 
 const Offset = styled("div")(({ theme }) => theme.mixins.toolbar)
 
@@ -92,6 +93,7 @@ function App() {
 
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
+      <DocumentTitle />
       <CssBaseline />
       <AppBar component="nav" position="fixed">
         <Toolbar>

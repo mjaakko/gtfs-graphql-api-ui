@@ -26,6 +26,7 @@ import './index.css';
 
 import Trip from './pages/Trip';
 import Stop from './pages/Stop';
+import { HelmetProvider } from 'react-helmet-async';
 
 //Fix Leaflet default icon not being visible
 L.Icon.Default.mergeOptions({
@@ -87,9 +88,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
-      <RouterProvider router={router} />
-    </ApolloProvider>
+    <HelmetProvider>
+      <ApolloProvider client={client}>
+        <RouterProvider router={router} />
+      </ApolloProvider>
+    </HelmetProvider>
   </React.StrictMode>
 );
 

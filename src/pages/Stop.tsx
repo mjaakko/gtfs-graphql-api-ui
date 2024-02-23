@@ -9,6 +9,7 @@ import { StopScheduleRow } from "../__generated__/graphql"
 import { formatTime } from "../utils/timeFormat"
 
 import useStopDetails from "../hooks/useStopDetails"
+import DocumentTitle from "../components/DocumentTitle";
 
 const StopScheduleRows = (props: { scheduleRows: StopScheduleRow[], stopTimezone: string | null }) => {
   const navigate = useNavigate()
@@ -43,9 +44,12 @@ const StopDetails = (props: { stopId: string }) => {
     return null
   }
 
+  const title = data.stop.name ?? null
+
   return <>
+    <DocumentTitle title={title} />
     <Typography variant="h5" component="h2" sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden'  }}>
-      { data.stop.name }
+      { title }
     </Typography>
     <StopScheduleRows scheduleRows={data.stop.scheduleRows as StopScheduleRow[]} stopTimezone={data.stop.timezone ?? null} />
   </>
