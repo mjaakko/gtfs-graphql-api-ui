@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom"
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineSeparator, timelineItemClasses } from "@mui/lab"
 import { deepOrange } from "@mui/material/colors"
 import { Box, CircularProgress, Typography } from "@mui/material"
+import { useTheme } from "@mui/material/styles"
 
 import { TripScheduleRow } from "../__generated__/graphql"
 
@@ -50,6 +51,7 @@ const TripScheduleRows = (props: { scheduleRows: TripScheduleRow[], agencyTimezo
           flex: 0,
           padding: 0,
         },
+        height: 'fit-content'
       }}>
         {props.scheduleRows.map((scheduleRow: TripScheduleRow, index: number) => {
           const stopTimezone = scheduleRow.stop.timezone
@@ -91,6 +93,8 @@ const TripScheduleRows = (props: { scheduleRows: TripScheduleRow[], agencyTimezo
 }
 
 const TripDetails = (props: { tripId: string, date: string }) => {
+  const theme = useTheme()
+
   const tripDetails = useTripDetails(props.tripId, props.date)
 
   if (tripDetails.loading) {
@@ -113,17 +117,21 @@ const TripDetails = (props: { tripId: string, date: string }) => {
 
   const vehicleId = tripDetails.data.trip.vehiclePosition?.vehicleId || null
 
-  return <>
-    <Typography variant="h5" component="h2" sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden'  }}>
-      { route.shortName ? route.shortName : route.longName }
-    </Typography>
-    { tripDetails.data.trip.vehiclePosition?.vehicleLabel &&
-      <Typography variant="caption" component="span" sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden'  }} gutterBottom>
-        { tripDetails.data.trip.vehiclePosition.vehicleLabel }
+  return <Box sx={{ display: 'flex', flexDirection: 'column', maxHeight: '100%' }}>
+    <Box component="header" sx={{ flexShrink: 0, flexGrow: 0, backgroundColor: theme.palette.background.default, zIndex: 2 }}>
+      <Typography variant="h5" component="h2" sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+        { route.shortName ? route.shortName : route.longName }
       </Typography>
-    }
-    <TripScheduleRows scheduleRows={tripDetails.data.trip.scheduleRows as TripScheduleRow[]} agencyTimezone={agencyTimezone} vehicleId={vehicleId}/>
-  </>
+      { tripDetails.data.trip.vehiclePosition?.vehicleLabel &&
+        <Typography variant="caption" component="span" sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden'  }} gutterBottom>
+          { tripDetails.data.trip.vehiclePosition.vehicleLabel }
+        </Typography>
+      }
+    </Box>
+    <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+      <TripScheduleRows scheduleRows={tripDetails.data.trip.scheduleRows as TripScheduleRow[]} agencyTimezone={agencyTimezone} vehicleId={vehicleId}/>
+    </Box>
+  </Box>
 }
 
 

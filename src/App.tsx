@@ -141,7 +141,7 @@ function App() {
           {drawer}
         </Drawer>
       </Box>
-      <Box component="main" sx={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+      <Box component="main" sx={{ display: 'flex', flex: 1, flexDirection: 'column', height: '100vh' }}>
         <Offset />
         <VehiclePositionProvider>
           <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
@@ -150,17 +150,30 @@ function App() {
                 ref={mapRef}
                 style={{ height: isAtleastMediumScreen ? '100%' : undefined, flexGrow: '1', minHeight: undefined }} />
               { outlet &&
-                <Box sx={{ 
-                  maxHeight: isAtleastMediumScreen ? '100%' : undefined,
-                  height: isAtleastMediumScreen ? '100%' : undefined,
+                <Box sx={{
+                  display: 'flex',
                   flexBasis: 400,
                   flexGrow: '0',
-                  p: 2,
-                  boxShadow: 1,
-                  zIndex: 1,
-                  overflow: 'scroll'
+                  maxHeight: isAtleastMediumScreen ? '100%' : 400,
+                  height: isAtleastMediumScreen ? '100%' : 400,
+                  background: 'white'
                   }}>
-                  <Outlet />
+                  <Box sx={{
+                    display: 'flex',
+                    flexGrow: '1',
+                    height: '100%',
+                    maxHeight: '100%',
+                    p: 2,
+                    overflow: 'hidden'
+                  }}>
+                    <Box sx={{
+                      flexGrow: '1',
+                      height: '100%',
+                      maxHeight: '100%'
+                    }}>
+                      <Outlet />
+                    </Box>
+                  </Box>
                 </Box>
               }
             </Box>
