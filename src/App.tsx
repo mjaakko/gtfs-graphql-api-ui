@@ -1,4 +1,4 @@
-import React, { useState, ReactElement, useRef, useEffect, ReactNode } from 'react';
+import { useState, ReactElement, useRef, useEffect, ReactNode } from 'react';
 
 import { Outlet, useOutlet } from 'react-router-dom';
 
@@ -23,12 +23,16 @@ import './App.css';
 import { env } from './env';
 
 import Map from './components/Map';
+import DocumentTitle from './components/DocumentTitle';
+import AppBarSearch from './components/AppBarSearch';
 
 import useVehiclePositions from './hooks/useVehiclePositions';
+import useStops from './hooks/useStops';
+
+import StopContext from './context/stopContext';
 import VehiclePositionContext from './context/vehiclePositionContext';
 
-import { VehiclePosition } from './__generated__/graphql';
-import DocumentTitle from './components/DocumentTitle';
+import { VehiclePosition, Stop } from './__generated__/graphql';
 
 const Offset = styled("div")(({ theme }) => theme.mixins.toolbar)
 
@@ -52,6 +56,14 @@ const VehiclePositionProvider = (props: { children: ReactNode }) => {
   return <VehiclePositionContext.Provider value={vehiclePositions.data?.vehiclePositions as VehiclePosition[] || []}>
     { props.children }
   </VehiclePositionContext.Provider>
+}
+
+const StopProvider = (props: { children: ReactNode }) => {
+  const stops = useStops()
+
+  return <StopContext.Provider value={stops.data?.stops as Stop[] || []}>
+    { props.children }
+  </StopContext.Provider>
 }
 
 function App() {
@@ -92,97 +104,101 @@ function App() {
   );
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh' }}>
-      <DocumentTitle />
-      <CssBaseline />
-      <AppBar component="nav" position="fixed">
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={toggleDrawer}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-          >
-            { env.REACT_APP_APPLICATION_TITLE }
-          </Typography>
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            { 
-              navItems.map((item: NavItem, index: number) => {
-                return (
-                  <Button key={index} sx={{ color: '#fff' }}>
-                    { item.icon }{ item.title }
-                  </Button>
-                )
-              })
-            }
+    <StopProvider>
+      <VehiclePositionProvider>
+        <Box sx={{ display: 'flex', height: '100vh' }}>
+          <DocumentTitle />
+          <CssBaseline />
+          <AppBar component="nav" position="fixed">
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={toggleDrawer}
+                sx={{ mr: 2, display: { sm: 'none' } }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+              >
+                { env.REACT_APP_APPLICATION_TITLE }
+              </Typography>
+              <AppBarSearch />
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                { 
+                  navItems.map((item: NavItem, index: number) => {
+                    return (
+                      <Button key={index} sx={{ color: '#fff' }}>
+                        { item.icon }{ item.title }
+                      </Button>
+                    )
+                  })
+                }
+              </Box>
+            </Toolbar>
+          </AppBar>
+          <Box component="nav">
+            <Drawer
+              container={window.document.body}
+              variant="temporary"
+              open={drawerOpen}
+              onClose={toggleDrawer}
+              ModalProps={{
+                keepMounted: true
+              }}
+              sx={{
+                display: { xs: 'block', sm: 'none' },
+                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
+              }}
+            >
+              {drawer}
+            </Drawer>
           </Box>
-        </Toolbar>
-      </AppBar>
-      <Box component="nav">
-        <Drawer
-          container={window.document.body}
-          variant="temporary"
-          open={drawerOpen}
-          onClose={toggleDrawer}
-          ModalProps={{
-            keepMounted: true
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
-          }}
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-      <Box component="main" sx={{ display: 'flex', flex: 1, flexDirection: 'column', height: '100vh' }}>
-        <Offset />
-        <VehiclePositionProvider>
-          <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-            <Box sx={{ height: '100%', display: 'flex', flexDirection: isAtleastMediumScreen ? 'row' : 'column' }}>
-              <Map 
-                ref={mapRef}
-                style={{ height: isAtleastMediumScreen ? '100%' : undefined, flexGrow: '1', minHeight: undefined }} />
-              { outlet &&
-                <Box sx={{
-                  display: 'flex',
-                  flexBasis: 400,
-                  flexGrow: '0',
-                  maxHeight: isAtleastMediumScreen ? '100%' : 400,
-                  height: isAtleastMediumScreen ? '100%' : 400,
-                  background: 'white'
-                  }}>
+          <Box component="main" sx={{ display: 'flex', flex: 1, flexDirection: 'column', height: '100vh' }}>
+            <Offset />
+            <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+              <Box sx={{ height: '100%', display: 'flex', flexDirection: isAtleastMediumScreen ? 'row' : 'column' }}>
+                <Map 
+                  ref={mapRef}
+                  style={{ height: isAtleastMediumScreen ? '100%' : undefined, flexGrow: '1', minHeight: undefined }} />
+                { outlet &&
                   <Box sx={{
                     display: 'flex',
-                    flexGrow: '1',
-                    height: '100%',
-                    maxHeight: '100%',
-                    p: 2,
-                    overflow: 'hidden'
-                  }}>
+                    flexBasis: 400,
+                    flexGrow: '0',
+                    maxHeight: isAtleastMediumScreen ? '100%' : 400,
+                    height: isAtleastMediumScreen ? '100%' : 400,
+                    background: 'white'
+                    }}>
                     <Box sx={{
+                      display: 'flex',
                       flexGrow: '1',
                       height: '100%',
-                      maxHeight: '100%'
+                      maxHeight: '100%',
+                      p: 2,
+                      overflow: 'hidden'
                     }}>
-                      <Outlet />
+                      <Box sx={{
+                        flexGrow: '1',
+                        height: '100%',
+                        maxHeight: '100%'
+                      }}>
+                        <Outlet />
+                      </Box>
                     </Box>
                   </Box>
-                </Box>
-              }
+                }
+              </Box>
             </Box>
           </Box>
-        </VehiclePositionProvider>
-      </Box>
-    </Box>
+        </Box>
+    
+      </VehiclePositionProvider>
+    </StopProvider>
   )
 }
 
