@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react"
 
-import { Marker, Popup } from "react-leaflet"
+import { Marker, Popup, useMap } from "react-leaflet"
 import { DivIcon, Marker as LeafletMarker } from "leaflet"
 
 import dayjs from "dayjs"
@@ -30,6 +30,8 @@ const VehicleMarker = (props: { vehiclePosition: VehiclePosition }) => {
 
   const markerRef = useRef<LeafletMarker>(null)
 
+  const map = useMap()
+
   const pathMatch = useMatch("/trips/:tripId/:tripDate")
 
   const markerOpen = pathMatch?.params.tripId === vehiclePosition.trip.tripId && pathMatch.params.tripDate === vehiclePosition.trip.date
@@ -37,8 +39,10 @@ const VehicleMarker = (props: { vehiclePosition: VehiclePosition }) => {
   useEffect(() => {
     if (markerRef.current && !markerRef.current.isPopupOpen() && markerOpen) {
       markerRef.current.openPopup()
+      
+      map.setView(markerRef.current.getLatLng())
     }
-  }, [markerOpen])
+  }, [markerOpen, map])
 
   if (!vehiclePosition.currentStop) {
     return null
@@ -59,6 +63,7 @@ const VehicleMarker = (props: { vehiclePosition: VehiclePosition }) => {
         popupopen: () => {
           if (!markerOpen) {
             navigate(`/trips/${vehiclePosition.trip.tripId}/${vehiclePosition.trip.date}`)
+            map.setView([vehiclePosition.latitude, vehiclePosition.longitude])
           }
         }
       }}

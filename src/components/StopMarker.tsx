@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react"
-import { Marker, Popup } from "react-leaflet"
+import { useEffect, useRef, useState } from "react"
+import { Marker, Popup, useMap } from "react-leaflet"
 import { Marker as LeafletMarker } from "leaflet"
 
 import { Stop } from "../__generated__/graphql"
@@ -8,13 +8,13 @@ import { useNavigate, useMatch } from "react-router-dom"
 import { Typography } from "@mui/material"
 
 const StopMarker = (props: { stop: Stop }) => {
-    const [showScheduleRow, setShowScheduleRows] = useState(false)
-  
     const stop = props.stop
 
     const navigate = useNavigate()
 
     const markerRef = useRef<LeafletMarker>(null)
+
+    const map = useMap()
 
     const pathMatch = useMatch("/stops/:stopId")
 
@@ -23,8 +23,10 @@ const StopMarker = (props: { stop: Stop }) => {
     useEffect(() => {
       if (markerRef.current && !markerRef.current.isPopupOpen() && markerOpen) {
         markerRef.current.openPopup()
+      
+        map.setView(markerRef.current.getLatLng())
       }
-    }, [markerOpen])
+    }, [markerOpen, map])
 
     if (!stop.latitude || !stop.longitude) {
       //Can't create markers for stops without location
@@ -44,11 +46,15 @@ const StopMarker = (props: { stop: Stop }) => {
           popupopen: () => {
             if (!markerOpen) {
               navigate(`/stops/${stop.stopId}`)
+              map.setView([stop.latitude!, stop.longitude!])
             }
           }
         }}
         ref={markerRef}>
-        <Popup minWidth={200}>
+        <Popup 
+          keepInView={false}
+          autoPan={false} 
+          minWidth={200}>
           <Typography variant="subtitle2" component="span">{ stop.name }</Typography>
         </Popup>
       </Marker>
