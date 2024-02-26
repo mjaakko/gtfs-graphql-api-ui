@@ -2,10 +2,11 @@ import { useContext, useState } from "react"
 import InputBase from "@mui/material/InputBase";
 import { alpha, styled } from "@mui/material/styles";
 import SearchIcon from '@mui/icons-material/Search';
-import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import Autocomplete from "@mui/material/Autocomplete";
 import StopContext from "../context/stopContext";
 import VehiclePositionContext from "../context/vehiclePositionContext";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -59,6 +60,10 @@ const Search = styled('div')(({ theme }) => ({
     const [open, setOpen] = useState(false)
     const [transitionActive, setTransitionActive] = useState(false)
 
+    const theme = useTheme()
+
+    const isAtleastMediumScreen = useMediaQuery(theme.breakpoints.up('sm'))
+
     const optionTitles = props.options.map(option => option.title)
     
     const onChange = (_: any, value: string) => {
@@ -71,7 +76,7 @@ const Search = styled('div')(({ theme }) => ({
         onChange={onChange}
         blurOnSelect={true}
         clearOnBlur={true}
-        open={open && !transitionActive}
+        open={open && (!isAtleastMediumScreen || !transitionActive)}
         onOpen={() => {
           setTransitionActive(true)
           setOpen(true)
