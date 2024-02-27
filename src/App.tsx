@@ -106,7 +106,7 @@ function App() {
   return (
     <StopProvider>
       <VehiclePositionProvider>
-        <Box sx={{ display: 'flex', height: '100vh' }}>
+        <Box sx={{ display: 'flex', height: '100%' }}>
           <DocumentTitle />
           <CssBaseline />
           <AppBar component="nav" position="fixed">
@@ -158,7 +158,7 @@ function App() {
               {drawer}
             </Drawer>
           </Box>
-          <Box component="main" sx={{ display: 'flex', flex: 1, flexDirection: 'column', height: '100vh' }}>
+          <Box component="main" sx={{ display: 'flex', flex: 1, flexDirection: 'column', height: '100%' }}>
             <Offset />
             <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
               <Box sx={{ height: '100%', display: 'flex', flexDirection: isAtleastMediumScreen ? 'row' : 'column' }}>
